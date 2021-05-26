@@ -24,6 +24,19 @@ linefeed        \n
 
 "struct"                                        {yylval.dataType = strdup(yytext);return STRUCT;}
 
+"namespace"                                     {yylval.dataType = strdup(yytext);return NAMESPACE;}
+
+"print"                                         {yylval.dataType = strdup(yytext);return PRINT;}
+
+"execute"                                       {yylval.dataType = strdup(yytext);return EXECUTE;}
+
+"if"                                            {yylval.dataType = strdup(yytext);return IF;}
+"else"                                          {yylval.dataType = strdup(yytext);return ELSE;}
+"elseif"                                        {yylval.dataType = strdup(yytext);return ELSEIF;}
+"return"                                        {yylval.dataType = strdup(yytext);return RETURN;}
+"is"                                            {yylval.dataType = strdup(yytext);return IS;}
+"not"                                           {yylval.dataType = strdup(yytext);return NOT;}
+
 
 "'"                                             {return SINGLE_QUOTES;}
 ","                                             {return COMMA;}
@@ -35,6 +48,11 @@ linefeed        \n
 "}"                                             {return CURLY_BRACE_CLOSE;}
 "["                                             {return BIG_BRACKET_OPEN;}
 "]"                                             {return BIG_BRACKET_CLOSE;}
+"=>"                                            {return ARROW_FUN;}
+":"                                             {return COLON;}
+"!"                                             {return EXCL_MARK;}
+"::"                                            {return COLON_COLON;}
+
 
 [\'][a-zA-Z][\']                                {yylval.charVal = yytext[1];    return CHARACTER_VALUE;}
 [-+]?[0-9]+                                     {yylval.intVal = atoi(yytext);  return INTEGER_VALUE;}

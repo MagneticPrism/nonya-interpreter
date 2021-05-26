@@ -42,6 +42,10 @@
 }
 
 
+%token COLON
+%token EXCL_MARK
+%token ARROW_FUN
+%token COLON_COLON
 
 %token  COMMA   SINGLE_QUOTES   SEMI_COLON   EQUALS 
 %token  BRACKET_OPEN  BRACKET_CLOSE   CURLY_BRACE_OPEN  CURLY_BRACE_CLOSE BIG_BRACKET_OPEN  BIG_BRACKET_CLOSE
@@ -58,10 +62,23 @@
 %token <dataType> DATA_TYPE
 %token <strVal> IDENTIFIER   ARRAY_IDENTIFIER
 %token <strVal> STRUCT
+%token <strVal> NAMESPACE
+
+%token <strVal> IF
+%token <strVal> ELSE
+%token <strVal> ELSEIF
+%token <strVal> RETURN
+%token <strVal> IS
+%token <strVal> NOT
+
+%token <strVal> PRINT
+
+%token <strVal> EXECUTE
 
 %type <strVal> DECLARATION
 %type <strVal> EXPRESSION
-%type <strVal> FUNCTION_DECLARATION 
+%type <strVal> FUNCTION_DECLARATION
+%type <strVal> FUNCTION_DEFINITION
 
 
 
@@ -75,6 +92,8 @@ DECLARATION : EXPRESSION  SEMI_COLON                              { clearBuffers
       | DECLARATION FUNCTION_DECLARATION SEMI_COLON                         
       | DECLARATION   STRUCT  IDENTIFIER  STRUCTURE_DEFINITION  SEMI_COLON
       | DECLARATION   STRUCT  IDENTIFIER  STRUCTURE_DEFINITION  IDENTIFIER_LIST   SEMI_COLON
+      | DECLARATION FUNCTION_DEFINITION SEMI_COLON
+      | DECLARATION EXECUTE ARROW_FUN PRINT SEMI_COLON
 
       | error '>'                     {/* ' > ' stops execution all together */}
       ;
@@ -161,6 +180,30 @@ FUNCTION_DECLARATION : DATA_TYPE IDENTIFIER BRACKET_OPEN DATA_TYPE_LIST BRACKET_
                                         }
           ;
 
+FUNCTION_DEFINITION : DATA_TYPE IDENTIFIER BRACKET_OPEN DATA_TYPE_LIST BRACKET_CLOSE COLON ARROW_FUN CURLY_BRACE_OPEN DECLARATION CURLY_BRACE_CLOSE{
+  
+                                          if(!isDuplicate($2,retrieveDataType())){
+                                            storeIdentifier($2,retrieveDataType());
+                                            storeDataType($1);
+                                          }else{
+                                            DuplicateIdentifierError($2);
+                                          } 
+
+                                        }
+          ;
+
+FUNCTION_DEFINITION : DATA_TYPE IDENTIFIER BRACKET_OPEN DATA_TYPE_LIST BRACKET_CLOSE COLON ARROW_FUN CURLY_BRACE_OPEN CURLY_BRACE_CLOSE{
+  
+                                          if(!isDuplicate($2,retrieveDataType())){
+                                            storeIdentifier($2,retrieveDataType());
+                                            storeDataType($1);
+                                          }else{
+                                            DuplicateIdentifierError($2);
+                                          } 
+
+                                        }
+          ;
+
 IDENTIFIER_LIST     : IDENTIFIER
             | IDENTIFIER_LIST   COMMA   IDENTIFIER
             ;
@@ -169,12 +212,14 @@ DATA_TYPE_LIST      : DATA_TYPE
             | DATA_TYPE_LIST  COMMA DATA_TYPE
             ;
 
+
+
+
 %%
 
 
 int main(){
 
   yyparse();
-  printf("No Errors!!\n");
   return 0;
 }
