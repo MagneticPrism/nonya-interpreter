@@ -1,5 +1,5 @@
 # Interpreter
-##### Interpreter for the nonya programming language
+#### Interpreter for the nonya programming language
 
 We’ll use 2 language tools: Lex and Yacc (or flex and bison) to accomplish this.
 
